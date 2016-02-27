@@ -44,6 +44,13 @@ const optionTypes = {
     ]),
     onComplete: React.PropTypes.func
   },
+  popToViewAtIndex: {
+    transition: React.PropTypes.oneOfType([
+      React.PropTypes.func,
+      React.PropTypes.number
+    ]),
+    onComplete: React.PropTypes.func
+  },
   setViews: {
     views: React.PropTypes.arrayOf(
       React.PropTypes.element
@@ -447,25 +454,32 @@ class NavigationController extends React.Component {
   }
 
   __popToRootView(options) {
+    __popToViewAtIndex(0, options);
+  }
+
+  __popToViewAtIndex(index, options) {
     options = typeof options === 'object' ? options : {};
     const defaults = {
       transition: Transition.type.PUSH_RIGHT
     };
     options = assign({}, defaults, options);
-    checkOptions('popToRootView', options);
+    checkOptions('popToViewAtIndex', options);
     if (this.state.views.length === 1) {
-      throw new Error('popToRootView() can only be called with two or more views in the stack')
+      throw new Error('popToViewAtIndex() can only be called with two or more views in the stack')
+    };
+    if (index < 0 || index > this.state.views.length - 2) {
+      throw new Error('popToViewAtIndex() can only be called with a valid index')
     };
     if (this.__isTransitioning) return;
     const {transition} = options;
     const [prev,next] = this.__viewIndexes;
-    const rootView = this.state.views[0];
+    const rootView = this.state.views[index];
     const topView = last(this.state.views);
     const mountedViews = [];
           mountedViews[prev] = topView;
           mountedViews[next] = rootView;
     // Display only the root view
-    const views = [rootView];
+    const views = this.state.views.slice(0, index + 1);
     // Show the wrappers
     this.__displayViews('block');
     // Pop from the top view, all the way to the root view
@@ -477,14 +491,14 @@ class NavigationController extends React.Component {
       // The view that will be shown
       const rootView = this.refs[`view-1`];
       if (rootView && this.state.preserveState) {
-        const state = this.__viewStates[0];
+        const state = this.__viewStates[index];
         // Rehydrate the state
         if (state) {
-          rootView.setState(state);  
+          rootView.setState(state);
         }
       }
       // Clear view states
-      this.__viewStates.length = 0;
+      this.__viewStates = this.__viewStates.slice(0, index);
       // Transition
       this.__transitionViews(options);
     });
