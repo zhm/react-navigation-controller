@@ -613,6 +613,11 @@ var NavigationController = function (_React$Component) {
       this.__popToRootView.apply(this, arguments);
     }
   }, {
+    key: 'popToViewAtIndex',
+    value: function popToViewAtIndex() {
+      this.__popToViewAtIndex.apply(this, arguments);
+    }
+  }, {
     key: 'setViews',
     value: function setViews() {
       this.__setViews.apply(this, arguments);

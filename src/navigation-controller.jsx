@@ -517,6 +517,10 @@ class NavigationController extends React.Component {
     this.__popToRootView(...arguments);
   }
 
+  popToViewAtIndex() {
+    this.__popToViewAtIndex(...arguments);
+  }
+
   setViews() {
     this.__setViews(...arguments);
   }
